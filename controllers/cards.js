@@ -27,13 +27,13 @@ module.exports.getCards = (req, res) => {
 
 module.exports.deleteCards = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .orFail(new Error('Карточка с указанным id не найдена'))
+    .orFail(() => new Error('CastError'))
     .then(() => {
       res.send({ message: 'Карточка удалена' });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Карточка с указанным id не найдена' });
+      if (err.message === 'CastError') {
+        res.status(400).send({ message: 'Некорректный Id' });
       } else {
         res.status(500).send({ message: 'Произошла ошибка на сервере' });
       }
@@ -42,14 +42,14 @@ module.exports.deleteCards = (req, res) => {
 
 module.exports.likeCards = (req, res) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
+    .orFail(() => new Error('CastError'))
     .populate(['owner', 'likes'])
-    .orFail(new Error('Карточка с указанным id не найдена'))
     .then((card) => {
       res.send(card);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Карточка с указанным id не найдена' });
+      if (err.message === 'CastError') {
+        res.status(400).send({ message: 'Некорректный Id' });
       } else {
         res.status(500).send({ message: 'Произошла ошибка на сервере' });
       }
@@ -58,14 +58,14 @@ module.exports.likeCards = (req, res) => {
 
 module.exports.dislikeCards = (req, res) => {
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
+    .orFail(() => new Error('CastError'))
     .populate(['owner', 'likes'])
-    .orFail(new Error('Карточка с указанным id не найдена'))
     .then((card) => {
       res.send(card);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Карточка с указанным id не найдена' });
+      if (err.message === 'CastError') {
+        res.status(400).send({ message: 'Некорректный Id' });
       } else {
         res.status(500).send({ message: 'Произошла ошибка на сервере' });
       }

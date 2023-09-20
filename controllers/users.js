@@ -21,12 +21,12 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
-    .orFail(new Error('Пользователь с указанным id не найден'))
+    .orFail(() => new Error('CastError'))
     .then((user) => {
       res.send(user);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.message === 'CastError') {
         res.status(400).send({ message: 'Некорректный Id' });
       } else {
         res.status(500).send({ message: 'Произошла ошибка на сервере' });
@@ -37,13 +37,19 @@ module.exports.getUserById = (req, res) => {
 module.exports.editUserData = (req, res) => {
   const { name, about } = req.body;
   if (req.user._id) {
-    User.findByIdAndUpdate(req.user._id, { name, about }, { new: 'true', runValidators: true })
+    User.findByIdAndUpdate(
+      req.user._id,
+      { name, about },
+      { new: 'true', runValidators: true },
+    )
       .then((user) => res.send(user))
       .catch((err) => {
         if (err.name === 'ValidationError') {
           res.status(400).send({ message: err.message });
         } else {
-          res.status(404).send({ message: 'пользователь с указанным id не найден' });
+          res
+            .status(404)
+            .send({ message: 'пользователь с указанным id не найден' });
         }
       });
   } else {
@@ -53,13 +59,19 @@ module.exports.editUserData = (req, res) => {
 
 module.exports.editUserAvatar = (req, res) => {
   if (req.user._id) {
-    User.findByIdAndUpdate(req.user._id, { avatar: req.body.avatar }, { new: 'true', runValidators: true })
+    User.findByIdAndUpdate(
+      req.user._id,
+      { avatar: req.body.avatar },
+      { new: 'true', runValidators: true },
+    )
       .then((user) => res.send(user))
       .catch((err) => {
         if (err.name === 'ValidationError') {
           res.status(400).send({ message: err.message });
         } else {
-          res.status(404).send({ message: 'пользователь с указанным id не найден' });
+          res
+            .status(404)
+            .send({ message: 'пользователь с указанным id не найден' });
         }
       });
   } else {
