@@ -21,12 +21,12 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
-    .orFail(() => new Error('CastError'))
+    .orFail(() => new Error('ErrorError'))
     .then((user) => {
       res.status(200).send(user);
     })
     .catch((err) => {
-      if (err.message === 'CastError') {
+      if (err.name === 'CastError') {
         res.status(400).send({ message: 'Некорректный Id' });
       } else if (err.name === 'DocumentNotFoundError') {
         res.status(404).send({ message: 'пользователь с указанным id не найден' });

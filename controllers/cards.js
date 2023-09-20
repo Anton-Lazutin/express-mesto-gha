@@ -27,12 +27,12 @@ module.exports.getCards = (req, res) => {
 
 module.exports.deleteCards = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .orFail(() => new Error('CastError'))
+    .orFail(() => new Error('ErrorError'))
     .then(() => {
       res.status(200).send({ message: 'Карточка удалена' });
     })
     .catch((err) => {
-      if (err.message === 'CastError') {
+      if (err.name === 'CastError') {
         res.status(400).send({ message: 'Некорректный Id' });
       } else if (err.name === 'DocumentNotFoundError') {
         res.status(404).send({ message: 'Карточка с указанным id не найдена' });
@@ -44,13 +44,13 @@ module.exports.deleteCards = (req, res) => {
 
 module.exports.likeCards = (req, res) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
-    .orFail(() => new Error('CastError'))
+    .orFail(() => new Error('ErrorError'))
     .populate(['owner', 'likes'])
     .then((card) => {
       res.send(card);
     })
     .catch((err) => {
-      if (err.message === 'CastError') {
+      if (err.name === 'CastError') {
         res.status(400).send({ message: 'Некорректный Id' });
       } else if (err.name === 'DocumentNotFoundError') {
         res.status(404).send({ message: 'Карточка с указанным id не найдена' });
@@ -62,13 +62,13 @@ module.exports.likeCards = (req, res) => {
 
 module.exports.dislikeCards = (req, res) => {
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
-    .orFail(() => new Error('CastError'))
+    .orFail(() => new Error('ErrorError'))
     .populate(['owner', 'likes'])
     .then((card) => {
       res.send(card);
     })
     .catch((err) => {
-      if (err.message === 'CastError') {
+      if (err.name === 'CastError') {
         res.status(400).send({ message: 'Некорректный Id' });
       } else if (err.name === 'DocumentNotFoundError') {
         res.status(404).send({ message: 'Карточка с указанным id не найдена' });
