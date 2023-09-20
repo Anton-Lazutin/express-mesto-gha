@@ -27,7 +27,7 @@ module.exports.getUserById = (req, res) => {
     })
     .catch((err) => {
       if (err.message === 'NotFound') {
-        res.status(404).send({ message: 'пользователь с указанным id не найден' });
+        res.status(404).send({ message: 'Пользователь с указанным id не найден' });
       } else if (err.name === 'CastError') {
         res.status(400).send({ message: 'Некорректный Id' });
       } else {
@@ -51,7 +51,7 @@ module.exports.editUserData = (req, res) => {
         } else {
           res
             .status(404)
-            .send({ message: 'пользователь с указанным id не найден' });
+            .send({ message: 'Пользователь с указанным id не найден' });
         }
       });
   } else {
@@ -73,7 +73,7 @@ module.exports.editUserAvatar = (req, res) => {
         } else {
           res
             .status(404)
-            .send({ message: 'пользователь с указанным id не найден' });
+            .send({ message: 'Пользователь с указанным id не найден' });
         }
       });
   } else {

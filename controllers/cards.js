@@ -28,19 +28,20 @@ module.exports.getCards = (req, res) => {
 };
 
 module.exports.deleteCards = (req, res) => {
-  if (req.params.cardId.length === 24) {
-    Card.findByIdAndRemove(req.params.cardId)
-      .then((card) => {
-        if (!card) {
-          res.status(404).send({ message: 'Карточка с указанным id не найдена' });
-          return;
-        }
-        res.send({ message: 'Карточка удалена' });
-      })
-      .catch(() => res.status(404).send({ message: 'Карточка с указанным id не найдена' }));
-  } else {
-    res.status(400).send({ message: 'Некорректный Id' });
-  }
+  Card.findByIdAndRemove(req.params.cardId)
+    .orFail(new Error('NotFound'))
+    .then(() => {
+      res.status(200).send({ message: 'Карточка удалена' });
+    })
+    .catch((err) => {
+      if (err.message === 'NotFound') {
+        res.status(404).send({ message: 'Карточка с указанным id не найдена' });
+      } else if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Некорректный Id' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка при запросе пользователя' });
+      }
+    });
 };
 
 module.exports.likeCards = (req, res) => {
