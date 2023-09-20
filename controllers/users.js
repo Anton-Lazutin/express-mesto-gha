@@ -20,20 +20,19 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUserById = (req, res) => {
-  User.findById(req.params.userId)
-    .orFail(() => new Error('ErrorError'))
-    .then((user) => {
-      res.status(200).send(user);
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Некорректный Id' });
-      } else if (err.name === 'DocumentNotFoundError') {
-        res.status(404).send({ message: 'пользователь с указанным id не найден' });
-      } else {
-        res.status(500).send({ message: 'Произошла ошибка на сервере' });
-      }
-    });
+  if (req.params.userId.length === 24) {
+    User.findById(req.params.userId)
+      .then((user) => {
+        if (!user) {
+          res.status(404).send({ message: 'пользователь с указанным id не найден' });
+          return;
+        }
+        res.status(200).send(user);
+      })
+      .catch(() => res.status(404).send({ message: 'пользователь с указанным id не найден' }));
+  } else {
+    res.status(400).send({ message: 'Некорректный Id' });
+  }
 };
 
 module.exports.editUserData = (req, res) => {
