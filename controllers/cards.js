@@ -29,11 +29,11 @@ module.exports.deleteCards = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .orFail(() => new Error('CastError'))
     .then(() => {
-      res.send({ message: 'Карточка удалена' });
+      res.status(200).send({ message: 'Карточка удалена' });
     })
     .catch((err) => {
       if (err.message === 'CastError') {
-        res.status(400).send({ message: 'Некорректный Id' });
+        res.status(404).send({ message: 'Некорректный Id' });
       } else {
         res.status(500).send({ message: 'Произошла ошибка на сервере' });
       }
@@ -49,7 +49,7 @@ module.exports.likeCards = (req, res) => {
     })
     .catch((err) => {
       if (err.message === 'CastError') {
-        res.status(400).send({ message: 'Некорректный Id' });
+        res.status(404).send({ message: 'Некорректный Id' });
       } else {
         res.status(500).send({ message: 'Произошла ошибка на сервере' });
       }
@@ -65,7 +65,7 @@ module.exports.dislikeCards = (req, res) => {
     })
     .catch((err) => {
       if (err.message === 'CastError') {
-        res.status(400).send({ message: 'Некорректный Id' });
+        res.status(404).send({ message: 'Некорректный Id' });
       } else {
         res.status(500).send({ message: 'Произошла ошибка на сервере' });
       }
