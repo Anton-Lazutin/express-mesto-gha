@@ -10,11 +10,17 @@ module.exports.addCard = (req, res, next) => {
         .orFail(new Error('NotFound'))
         .populate('owner')
         .then((data) => res.status(201).send(data))
-        .catch(() => res.status(404).send({ message: 'Карточка с указанным id не найдена' }));
+        .catch((err) => {
+          if (err.message === 'NotFound') {
+            next(new NotFoundError('Карточка с указанным id не найдена'));
+          } else {
+            next(err);
+          }
+        });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: err.message });
+        next(new BadRequestError(err.message));
       } else {
         next(err);
       }

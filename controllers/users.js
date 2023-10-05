@@ -8,7 +8,7 @@ module.exports.addUser = (req, res, next) => {
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: err.message });
+        next(new BadRequestError(err.message));
       } else {
         next(err);
       }
@@ -18,7 +18,7 @@ module.exports.addUser = (req, res, next) => {
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((user) => res.send(user))
-    .catch((err) => next(err));
+    .catch(next);
 };
 
 module.exports.getUserById = (req, res, next) => {
@@ -45,7 +45,7 @@ module.exports.editUserData = (req, res, next) => {
       .then((user) => res.send(user))
       .catch((err) => {
         if (err.name === 'ValidationError') {
-          res.status(400).send({ message: err.message });
+          next(new BadRequestError(err.message));
         } else {
           next(err);
         }
@@ -61,7 +61,7 @@ module.exports.editUserAvatar = (req, res, next) => {
       .then((user) => res.send(user))
       .catch((err) => {
         if (err.name === 'ValidationError') {
-          res.status(400).send({ message: err.message });
+          next(new BadRequestError(err.message));
         } else {
           next(err);
         }
