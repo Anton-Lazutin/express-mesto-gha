@@ -1,4 +1,4 @@
-const { HTTP_STATUS_NOT_FOUND } = require('http2').constants;
+const { HTTP_STATUS_NOT_FOUND } = require('http2').constants; // 404
 
 module.exports = class NotFoundError extends Error {
   constructor(message) {
